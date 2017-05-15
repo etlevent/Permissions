@@ -50,10 +50,20 @@ public class Permissions {
     }
 
     public static void requestPermissions(Activity activity, String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        if (!hasSelfPermissions(activity, permissions)) {
+            ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        } else {
+            Action action = createAction(activity);
+            action.permissionGranted(requestCode);
+        }
     }
 
     public static void requestPermissions(Fragment fragment, String[] permissions, int requestCode) {
+        if (hasSelfPermissions(fragment.getContext(), permissions)) {
+            Action action = createAction(fragment);
+            action.permissionGranted(requestCode);
+            return;
+        }
         Fragment parentFragment = null;
         while (fragment.getParentFragment() != null) {
             parentFragment = fragment.getParentFragment();
@@ -69,7 +79,6 @@ public class Permissions {
                                                   @NonNull String[] permissions,
                                                   @NonNull int[] grantResults) {
         Action action = createAction(object);
-        Log.e("Test", "action=" + action);
         if (action.checkPermissions(permissions)) {
             action.permissionGranted(requestCode);
         } else {
