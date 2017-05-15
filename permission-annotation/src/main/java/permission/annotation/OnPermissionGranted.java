@@ -11,5 +11,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.SOURCE)
 @Target(ElementType.METHOD)
 public @interface OnPermissionGranted {
-    String[] value() default {};
+    int[] value() default {};
 }
