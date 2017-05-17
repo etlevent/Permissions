@@ -1,0 +1,25 @@
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+dependencies {
+    //gradle sdk
+    compile gradleApi()
+    //groovy sdk
+    compile localGroovy()
+    compile 'com.android.tools.build:gradle:2.3.2'
+    compile 'org.aspectj:aspectjtools:1.8.10'
+}
+
+repositories {
+    mavenCentral()
+}
+
+group = 'cherry.android.plugins'
+version = '1.0.0'
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri('F:/Android/repos'))
+        }
+    }
+}

@@ -1,1 +1,1 @@
-include ':app', ':permission-api', ':permission-compiler', ':permission-annotation'
+include ':app', ':permissions-plugin', ':permissions-annotations', ':permissions-compiler', ':permissions-api'
