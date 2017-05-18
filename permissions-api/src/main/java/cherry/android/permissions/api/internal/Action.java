@@ -8,4 +8,8 @@ public interface Action {
     void permissionGranted(int requestCode);
 
     void permissionDenied(int requestCode);
+
+    boolean shouldPermissionRationale(int requestCode);
+
+    void showPermissionRationale(int requestCode);
 }

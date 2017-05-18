@@ -7,6 +7,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 import javax.lang.model.element.Modifier;
@@ -24,12 +25,14 @@ public class PermissionClass {
 
     private List<PermissionMethod> mGrantedMethodList;
     private List<PermissionMethod> mDeniedMethodList;
+    private List<PermissionMethod> mRationalMethodList;
 
     public PermissionClass(Elements elementUtils, TypeElement element) {
         this.mElementUtils = elementUtils;
         this.mClassElement = element;
         mGrantedMethodList = new ArrayList<>();
         mDeniedMethodList = new ArrayList<>();
+        mRationalMethodList = new ArrayList<>();
     }
 
     public void addPermissionGrantedMethod(PermissionMethod method) {
@@ -38,6 +41,10 @@ public class PermissionClass {
 
     public void addPermissionDeniedMethod(PermissionMethod method) {
         mDeniedMethodList.add(method);
+    }
+
+    public void addPermissionRationalMethod(PermissionMethod method) {
+        mRationalMethodList.add(method);
     }
 
     private String getPackageName() {
@@ -64,9 +71,12 @@ public class PermissionClass {
                 .addSuperinterface(ACTION_CLASS)
                 .addModifiers(Modifier.PUBLIC)
                 .addField(getTypeName(), "target", Modifier.PRIVATE)
+                .addField(BitSet.class, "bitSet", Modifier.PRIVATE)
                 .addMethod(buildConstructorMethod())
                 .addMethod(buildPermissionGrantedMethod())
-                .addMethod(buildPermissionDeniedMethod());
+                .addMethod(buildPermissionDeniedMethod())
+                .addMethod(buildShouldPermissionRationalMethod())
+                .addMethod(buildShowPermissionRationalMethod());
 
 
         return JavaFile.builder(getPackageName(), typeBuilder.build()).build();
@@ -76,7 +86,17 @@ public class PermissionClass {
         MethodSpec.Builder method = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(getTypeName(), "target", Modifier.FINAL)
-                .addStatement("this.target = target");
+                .addStatement("this.target = target")
+                .addStatement("this.bitSet = new $T(1)", BitSet.class);
+        BitSet bitSet = new BitSet(1);
+        for (PermissionMethod m : mRationalMethodList) {
+            for (int requestCode : m.getPermissionRequestCodes()) {
+                if (bitSet.get(requestCode))
+                    continue;
+                bitSet.set(requestCode);
+                method.addStatement("this.bitSet.set($L)", requestCode);
+            }
+        }
         return method.build();
     }
 
@@ -107,6 +127,31 @@ public class PermissionClass {
             }
             method.endControlFlow();
         }
+        return method.build();
+    }
+
+    private MethodSpec buildShowPermissionRationalMethod() {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("showPermissionRationale")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(int.class, "requestCode")
+                .addAnnotation(Override.class);
+        if (mRationalMethodList.size() > 0) {
+            method.beginControlFlow("switch(requestCode)");
+            for (PermissionMethod permissionMethod : mRationalMethodList) {
+                method.addCode(permissionMethod.generateCode());
+            }
+            method.endControlFlow();
+        }
+        return method.build();
+    }
+
+    private MethodSpec buildShouldPermissionRationalMethod() {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("shouldPermissionRationale")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(int.class, "requestCode")
+                .addAnnotation(Override.class)
+                .returns(TypeName.BOOLEAN)
+                .addStatement("return this.bitSet.get(requestCode)");
         return method.build();
     }
 

@@ -35,8 +35,7 @@ public class PermissionAspect {
     public Object requestPermissions(final ProceedingJoinPoint joinPoint, RequestPermission requestPermission) throws Throwable {
         String[] permissions = requestPermission.value();
         int requestCode = requestPermission.requestCode();
-        Object target = joinPoint.getTarget();
-        Log.i(TAG, "requestPermissions");
+        final Object target = joinPoint.getTarget();
         if (!PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
             Log.i(TAG, "requestPermissions " + buildPermissionMessage(permissions, requestCode));
             PermissionUtils.requestPermissions(target, permissions, requestCode);
@@ -46,7 +45,6 @@ public class PermissionAspect {
         }
     }
 
-    //onRequestPermissionsResult
     @Around("execution(* *.onRequestPermissionsResult(..))")
     public Object requestPermissionsRequest(final ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = joinPoint.proceed();
@@ -77,4 +75,46 @@ public class PermissionAspect {
         return builder.toString();
     }
 
+
+//    within(android.app.Activity+)
+//    @Before("execution(* android.app.Activity.on**(..))")
+//    @Before("within(android.app.Activity+) || target(android.app.Activity)" +
+//            " || target(android.support.v4.app.ActivityCompat.OnRequestPermissionsResultCallback)")
+//    public void testOn(JoinPoint joinPoint) {
+//        Log.e(TAG, "test on " + joinPoint.getSignature());
+//    }
+
+//        private static final String POINTCUT_ACTIVITY_PERMISSIONS_RESULT_METHOD =
+//            "execution(* android.app.Activity+.onRequestPermissionsResult(..))" +
+//                    " || execution(* android.app.Activity.onRequestPermissionsResult(..))";
+//    private static final String POINTCUT_FRAGMENT_ACTIVITY_PERMISSIONS_RESULT_METHOD =
+//            "execution(* android.support.v4.app.FragmentActivity+.onRequestPermissionsResult(..))" +
+//                    " || execution(* android.support.v4.app.FragmentActivity.onRequestPermissionsResult(..))";
+//    private static final String POINTCUT_FRAGMENT_PERMISSIONS_RESULT_METHOD =
+//            "execution(* android.app.Fragment+.onRequestPermissionsResult(..))" +
+//                    " || execution(* android.app.Fragment.onRequestPermissionsResult(..))";
+//    private static final String POINTCUT_SUPPORT_FRAGMENT_PERMISSIONS_RESULT_METHOD =
+//            "execution(* android.support.v4.app.Fragment+.onRequestPermissionsResult(..))" +
+//                    " || execution(* android.support.v4.app.Fragment.onRequestPermissionsResult(..))";
+//
+//    //args
+//    @Pointcut(POINTCUT_ACTIVITY_PERMISSIONS_RESULT_METHOD)
+//    public void activityPermissionsResult() {
+//    }
+//
+//    @Pointcut(POINTCUT_FRAGMENT_ACTIVITY_PERMISSIONS_RESULT_METHOD)
+//    public void fragmentActivityPermissionsResult() {
+//    }
+//
+//    @Pointcut(POINTCUT_FRAGMENT_PERMISSIONS_RESULT_METHOD)
+//    public void fragmentPermissionsResult() {
+//    }
+//
+//    @Pointcut(POINTCUT_SUPPORT_FRAGMENT_PERMISSIONS_RESULT_METHOD)
+//    public void supportFragmentPermissionsResult() {
+//    }
+//        @Around("activityPermissionsResult()" +
+//            " || fragmentActivityPermissionsResult()" +
+//            " || fragmentPermissionsResult()" +
+//            " || supportFragmentPermissionsResult()")
 }

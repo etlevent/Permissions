@@ -91,18 +91,20 @@ public class PermissionUtils {
     }
 
     private static void requestPermissions(Activity activity, String[] permissions, int requestCode) {
-        ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        if (!shouldShowRequestPermissionRational(activity, permissions)
+                && createAction(activity).shouldPermissionRationale(requestCode)) {
+            createAction(activity).showPermissionRationale(requestCode);
+        } else {
+            ActivityCompat.requestPermissions(activity, permissions, requestCode);
+        }
     }
 
     private static void requestPermissions(Fragment fragment, String[] permissions, int requestCode) {
-        Fragment parentFragment = null;
-        while (fragment.getParentFragment() != null) {
-            parentFragment = fragment.getParentFragment();
-        }
-        if (parentFragment == null) {
-            fragment.requestPermissions(permissions, requestCode);
+        if (!shouldShowRequestPermissionRational(fragment, permissions)
+                && createAction(fragment).shouldPermissionRationale(requestCode)) {
+            createAction(fragment).showPermissionRationale(requestCode);
         } else {
-            parentFragment.requestPermissions(permissions, requestCode);
+            fragment.requestPermissions(permissions, requestCode);
         }
     }
 

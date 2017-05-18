@@ -31,7 +31,6 @@ public class PermissionMethod {
         try {
             Method method = annotationClass.getDeclaredMethod("value");
             mPermissionRequestCode = (int[]) method.invoke(annotation);
-            System.err.printf("request code %d\n", mPermissionRequestCode[0]);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -45,6 +44,10 @@ public class PermissionMethod {
         return mElement.getSimpleName().toString();
     }
 
+
+    public int[] getPermissionRequestCodes() {
+        return mPermissionRequestCode;
+    }
 
     public CodeBlock generateCode() {
         CodeBlock.Builder codeBuilder = CodeBlock.builder();

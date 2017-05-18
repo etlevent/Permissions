@@ -21,6 +21,7 @@ import javax.lang.model.util.Elements;
 
 import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
+import cherry.android.permissions.annotations.PermissionNeverAskAgain;
 
 @AutoService(Processor.class)
 public class PermissionProcessor extends AbstractProcessor {
@@ -51,9 +52,9 @@ public class PermissionProcessor extends AbstractProcessor {
 
     public static Set<Class<? extends Annotation>> getSupportedAnnotations() {
         Set<Class<? extends Annotation>> annotations = new HashSet<>();
-//        annotations.add(RequestPermission.class);
         annotations.add(PermissionGranted.class);
         annotations.add(PermissionDenied.class);
+        annotations.add(PermissionNeverAskAgain.class);
         return annotations;
     }
 
@@ -68,12 +69,6 @@ public class PermissionProcessor extends AbstractProcessor {
     private void findAndParseTargets(RoundEnvironment roundEnv) {
         Map<String, PermissionClass> permissionClassMap = new HashMap<>();
 
-//        for (Element element : roundEnv.getElementsAnnotatedWith(RequestPermission.class)) {
-//            TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
-//            PermissionClass permission = getPermissionClass(permissionClassMap, enclosingElement);
-//            PermissionMethod method = new PermissionMethod(element, RequestPermission.class);
-//        }
-
         for (Element element : roundEnv.getElementsAnnotatedWith(PermissionGranted.class)) {
             TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
             PermissionClass permission = getPermissionClass(permissionClassMap, enclosingElement);
@@ -86,6 +81,13 @@ public class PermissionProcessor extends AbstractProcessor {
             PermissionClass permission = getPermissionClass(permissionClassMap, enclosingElement);
             PermissionMethod method = new PermissionMethod(element, PermissionDenied.class);
             permission.addPermissionDeniedMethod(method);
+        }
+
+        for (Element element : roundEnv.getElementsAnnotatedWith(PermissionNeverAskAgain.class)) {
+            TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+            PermissionClass permission = getPermissionClass(permissionClassMap, enclosingElement);
+            PermissionMethod method = new PermissionMethod(element, PermissionNeverAskAgain.class);
+            permission.addPermissionRationalMethod(method);
         }
 
         try {
