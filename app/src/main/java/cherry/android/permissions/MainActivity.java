@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
@@ -37,11 +38,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @PermissionGranted(1001)
     void permissionGranted() {
-
+        Toast.makeText(this, "permissionGranted", Toast.LENGTH_SHORT).show();
+        testRequestPermission();
     }
 
     @PermissionDenied(1001)
     void permissionDenied() {
-
+        Toast.makeText(this, "permissionDenied", Toast.LENGTH_SHORT).show();
     }
 }

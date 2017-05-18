@@ -110,6 +110,6 @@ public class PermissionClass {
         return method.build();
     }
 
-    private static final ClassName ACTION_CLASS = ClassName.get("cherry.android.permissions.api", "Action");
-    private static final ClassName PERMISSIONS_CLASS = ClassName.get("cherry.android.permissions.api", "Permissions");
+    private static final ClassName ACTION_CLASS = ClassName.get("cherry.android.permissions.api.internal", "Action");
+    private static final ClassName PERMISSIONS_CLASS = ClassName.get("cherry.android.permissions.api.internal", "PermissionUtils");
 }

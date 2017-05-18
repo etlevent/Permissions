@@ -1,4 +1,4 @@
-package cherry.android.permissions.api;
+package cherry.android.permissions.api.internal;
 
 /**
  * Created by Administrator on 2017/5/15.

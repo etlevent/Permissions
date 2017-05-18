@@ -1,11 +1,15 @@
-package cherry.android.permissions.api;
+package cherry.android.permissions.api.internal;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Process;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.AppOpsManagerCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.PermissionChecker;
 import android.util.Log;
 
 import java.lang.reflect.Constructor;
@@ -17,20 +21,48 @@ import java.util.Map;
  * Created by Administrator on 2017/5/15.
  */
 
-public class Permissions {
+public class PermissionUtils {
 
-    private static final String TAG = "Permissions";
+    private static final String TAG = "PermissionUtils";
 
     public static boolean hasSelfPermissions(Context context, String... permissions) {
         for (String permission : permissions) {
-            if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                return false;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                    && "Xiaomi".equalsIgnoreCase(Build.MANUFACTURER)) {
+                if (!checkSelfPermissionForXiaomi(context, permission)) {
+                    return false;
+                }
+            } else {
+                if (ContextCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
             }
         }
         return true;
     }
 
-    public static boolean shouldShowRequestPermissionRational(Activity activity, String... permissions) {
+    private static boolean checkSelfPermissionForXiaomi(Context context, String permission) {
+        String permissionToOp = AppOpsManagerCompat.permissionToOp(permission);
+        if (permissionToOp == null)
+            return true;
+        int noteOp = AppOpsManagerCompat.noteOp(context, permissionToOp, Process.myUid(), context.getPackageName());
+        return noteOp == AppOpsManagerCompat.MODE_ALLOWED
+                && PermissionChecker.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public static boolean shouldShowRequestPermissionRational(Object target, String... permissions) {
+        if (target instanceof Activity) {
+            Activity activity = (Activity) target;
+            return shouldShowRequestPermissionRational(activity, permissions);
+        } else if (target instanceof Fragment) {
+            Fragment fragment = (Fragment) target;
+            return shouldShowRequestPermissionRational(fragment, permissions);
+        } else {
+            throw new IllegalArgumentException("target must be Activity or Fragment :" + target);
+        }
+    }
+
+    private static boolean shouldShowRequestPermissionRational(Activity activity, String... permissions) {
         for (String permission : permissions) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(activity, permission))
                 return true;
@@ -38,7 +70,7 @@ public class Permissions {
         return false;
     }
 
-    public static boolean shouldShowRequestPermissionRational(Fragment fragment, String... permissions) {
+    private static boolean shouldShowRequestPermissionRational(Fragment fragment, String... permissions) {
         for (String permission : permissions) {
             if (fragment.shouldShowRequestPermissionRationale(permission))
                 return true;

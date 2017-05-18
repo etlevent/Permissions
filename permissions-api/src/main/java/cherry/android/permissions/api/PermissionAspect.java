@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 
 import cherry.android.permissions.annotations.RequestPermission;
+import cherry.android.permissions.api.internal.PermissionUtils;
 
 /**
  * Created by Administrator on 2017/5/17.
@@ -36,9 +37,9 @@ public class PermissionAspect {
         int requestCode = requestPermission.requestCode();
         Object target = joinPoint.getTarget();
         Log.i(TAG, "requestPermissions");
-        if (!Permissions.hasSelfPermissions(Permissions.getContext(target), permissions)) {
+        if (!PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
             Log.i(TAG, "requestPermissions " + buildPermissionMessage(permissions, requestCode));
-            Permissions.requestPermissions(target, permissions, requestCode);
+            PermissionUtils.requestPermissions(target, permissions, requestCode);
             return null;
         } else {
             return joinPoint.proceed();
@@ -54,17 +55,17 @@ public class PermissionAspect {
         String[] permissions = (String[]) args[1];
         Log.i(TAG, "requestPermissionsResult " + requestCode + ",permissions:" + permissions[0]);
         Object target = joinPoint.getTarget();
-        if (Permissions.hasSelfPermissions(Permissions.getContext(target), permissions)) {
-            Permissions.permissionGranted(target, requestCode);
+        if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
+            PermissionUtils.permissionGranted(target, requestCode);
         } else {
-            Permissions.permissionDenied(target, requestCode);
+            PermissionUtils.permissionDenied(target, requestCode);
         }
         return result;
     }
 
     private static String buildPermissionMessage(String[] permissions, int code) {
         StringBuilder builder = new StringBuilder();
-        builder.append("Permissions:[\n");
+        builder.append("PermissionUtils:[\n");
         for (String permission : permissions) {
             builder.append("\t\t")
                     .append(permission)
