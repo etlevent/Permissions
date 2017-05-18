@@ -19,7 +19,6 @@ class PermissionsPlugin implements Plugin<Project> {
             throw new IllegalStateException("'android' or 'android-library' plugin required.")
         }
 
-        println("Permissions Plugin android?")
         final def log = project.logger
         final def variants
         if (hasApp) {
@@ -31,8 +30,6 @@ class PermissionsPlugin implements Plugin<Project> {
         project.dependencies {
             compile 'org.aspectj:aspectjrt:1.8.10'
         }
-
-        println("Permissions Plugin!")
 
         project.extensions.create('permission', PermissionsExtension)
 
@@ -52,7 +49,7 @@ class PermissionsPlugin implements Plugin<Project> {
                                  "-aspectpath", javaCompile.classpath.asPath,
                                  "-d", javaCompile.destinationDir.toString(),
                                  "-classpath", javaCompile.classpath.asPath,
-                                 "-bootclasspath", android.bootClasspath.join(
+                                 "-bootclasspath", project.android.bootClasspath.join(
                         File.pathSeparator)]
 
                 MessageHandler handler = new MessageHandler(true);

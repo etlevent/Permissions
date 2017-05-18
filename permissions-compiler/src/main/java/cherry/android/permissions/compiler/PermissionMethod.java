@@ -31,7 +31,7 @@ public class PermissionMethod {
         try {
             Method method = annotationClass.getDeclaredMethod("value");
             mPermissionRequestCode = (int[]) method.invoke(annotation);
-            System.err.printf("request code %d", mPermissionRequestCode[0]);
+            System.err.printf("request code %d\n", mPermissionRequestCode[0]);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

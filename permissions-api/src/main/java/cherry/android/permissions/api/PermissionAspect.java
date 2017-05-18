@@ -18,9 +18,9 @@ public class PermissionAspect {
     private static final String TAG = "PermissionAspect";
 
     private static final String REQUEST_PERMISSION_POINTCUT_METHOD =
-            "execution(@com.example.RequestPermission * *(..))";
+            "execution(@cherry.android.permissions.annotations.RequestPermission * *(..))";
     private static final String REQUEST_PERMISSION_POINTCUT_CONSTRUCTOR =
-            "execution(@com.example.RequestPermission *.new(..))";
+            "execution(@cherry.android.permissions.annotations.RequestPermission *.new(..))";
 
     @Pointcut(REQUEST_PERMISSION_POINTCUT_METHOD + " && @annotation(args)")
     public void requestPermissionMethod(RequestPermission args) {
@@ -35,6 +35,7 @@ public class PermissionAspect {
         String[] permissions = requestPermission.value();
         int requestCode = requestPermission.requestCode();
         Object target = joinPoint.getTarget();
+        Log.i(TAG, "requestPermissions");
         if (!Permissions.hasSelfPermissions(Permissions.getContext(target), permissions)) {
             Log.i(TAG, "requestPermissions " + buildPermissionMessage(permissions, requestCode));
             Permissions.requestPermissions(target, permissions, requestCode);
