@@ -16,11 +16,18 @@ repositories {
 }
 
 tasks.withType(Javadoc) {
-    options { encoding 'UTF-8'
+    options {
+        encoding 'UTF-8'
         charSet 'UTF-8'
         links "http://docs.oracle.com/javase/7/docs/api"
     }
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+// user = properties.getProperty("bintray.user")
+//key = properties.getProperty("bintray.apikey")
+
 
 group = 'cherry.android.plugins'
 version = '1.0.0'
@@ -31,3 +38,30 @@ uploadArchives {
         }
     }
 }
+
+//ext {
+//    bintrayRepo = 'maven'
+//    bintrayName = 'plugins'
+//
+//    publishedGroupId = 'cherry.android.plugins'
+//    libraryName = 'Permissions-plugin'
+//    artifact = 'permissions-plugin'
+//
+//    libraryDescription = 'permissions-plugin for aspectj.'
+//
+//    siteUrl = 'https://github.com/CherryLius/Permissions'
+//    gitUrl = 'https://github.com/CherryLius/Permissions.git'
+//
+//    libraryVersion = '1.0.0'
+//
+//    developerId = 'cherry'
+//    developerName = 'cherry'
+//    developerEmail = '767041809@qq.com'
+//
+//    licenseName = 'The Apache Software License, Version 2.0'
+//    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//    allLicenses = ["Apache-2.0"]
+//}
+//
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
+//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
