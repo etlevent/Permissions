@@ -165,6 +165,8 @@ public class PermissionUtils {
         if (constructor != null) {
             return constructor;
         }
+        if (targetClass.getName().equals(Object.class.getName()))
+            return null;
         String className = targetClass.getName();
         try {
             Class<?> permissionClass = Class.forName(className + "_Permissions");

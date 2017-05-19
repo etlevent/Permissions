@@ -3,7 +3,6 @@ package cherry.android.permissions;
 
 import android.Manifest;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -15,12 +14,13 @@ import android.widget.Toast;
 import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
 import cherry.android.permissions.annotations.RequestPermission;
+import cherry.android.permissions.base.BaseFragment;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FirstFragment extends Fragment implements View.OnClickListener {
+public class FirstFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,12 +55,6 @@ public class FirstFragment extends Fragment implements View.OnClickListener {
     @RequestPermission(value = Manifest.permission.CAMERA, requestCode = 111)
     void requestCamera() {
         Toast.makeText(getActivity(), "requestCamera", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        Log.i("Test", "first onRequestPermissionsResult");
     }
 
     @RequestPermission(value = Manifest.permission.READ_CONTACTS, requestCode = 511)

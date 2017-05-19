@@ -15,7 +15,6 @@
     public void onClick(View v) {
       testRequestPermission();
     }
-
     @RequestPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode = 1001)
     void testRequestPermission() {
         Toast.makeText(this, "permission method", Toast.LENGTH_SHORT).show();
@@ -56,6 +55,12 @@
 ```
 - 重写[Activity]或[Fragment]`onRequestPermissionsResult`
 由于对Aspectj不是很熟悉，目前这套代码有一个比较鸡肋的地方就是需要重写[Activity]或[Fragment]的`onRequestPermissionsResult`方法(只需重写方法调用super方法即可)，建议**在Activity或Fragment的基类中重写此方法**；
+```
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+```
 目前暂时无法实现Aspectj对于Activity没有被重写的方法的捕获，如果有**大神**实现过相关功能，可以一起讨论学习下
 - gradle配置：项目在未发布到[Bintrayjcenter](https://bintray.com/bintray/jcenter)中，因此可以引用我的私有仓库来完成，在**Project**的**build.gradle**中添加
 ```
@@ -95,7 +100,7 @@ dependencies {
     apt 'cherry.android:permissions-compiler:1.0.0'
 }
 ```
-或者可以到我的[github](https://github.com/CherryLius/Permissions)查看
+或者可以到我的[github](https://github.com/CherryLius/Permissions)中clone源代码
 
 部分代码参照[PermissionsDispatcher](https://github.com/hotchemi/PermissionsDispatcher)，表示感谢，THANKS
 

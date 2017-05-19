@@ -36,14 +36,18 @@ public class PermissionAspect {
         String[] permissions = requestPermission.value();
         int requestCode = requestPermission.requestCode();
         final Object target = joinPoint.getTarget();
+        Log.i(TAG, "requestPermissions " + buildPermissionMessage(permissions, requestCode));
         if (!PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
-            Log.i(TAG, "requestPermissions " + buildPermissionMessage(permissions, requestCode));
             PermissionUtils.requestPermissions(target, permissions, requestCode);
+            mLastTarget = target;
             return null;
         } else {
+            mLastTarget = null;
             return joinPoint.proceed();
         }
     }
+
+    private Object mLastTarget;
 
     @Around("execution(* *.onRequestPermissionsResult(..))")
     public Object requestPermissionsRequest(final ProceedingJoinPoint joinPoint) throws Throwable {
@@ -53,10 +57,13 @@ public class PermissionAspect {
         String[] permissions = (String[]) args[1];
         Log.i(TAG, "requestPermissionsResult " + requestCode + ",permissions:" + permissions[0]);
         Object target = joinPoint.getTarget();
-        if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
-            PermissionUtils.permissionGranted(target, requestCode);
-        } else {
-            PermissionUtils.permissionDenied(target, requestCode, permissions);
+        if (mLastTarget != null && mLastTarget.equals(target)) {
+            if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
+                PermissionUtils.permissionGranted(target, requestCode);
+            } else {
+                PermissionUtils.permissionDenied(target, requestCode, permissions);
+            }
+            mLastTarget = null;
         }
         return result;
     }

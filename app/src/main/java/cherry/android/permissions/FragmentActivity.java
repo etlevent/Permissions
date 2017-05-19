@@ -1,22 +1,22 @@
 package cherry.android.permissions;
 
 import android.Manifest;
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
 import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
 import cherry.android.permissions.annotations.RequestPermission;
+import cherry.android.permissions.base.BaseActivity;
 
 /**
  * Created by Administrator on 2017/5/18.
  */
 
-public class FragmentActivity extends AppCompatActivity implements View.OnClickListener {
+public class FragmentActivity extends BaseActivity implements View.OnClickListener {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,13 +26,10 @@ public class FragmentActivity extends AppCompatActivity implements View.OnClickL
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
     public void onClick(View v) {
-        method1();
+        //method1();
+        startActivity(new Intent(this, SecondFragmentActivity.class));
+        finish();
     }
 
     @RequestPermission(value = Manifest.permission.CALL_PHONE, requestCode = 1111)

@@ -23,6 +23,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".FragmentActivity" />
+        <activity android:name=".SecondFragmentActivity"></activity>
     </application>
 
 </manifest>
