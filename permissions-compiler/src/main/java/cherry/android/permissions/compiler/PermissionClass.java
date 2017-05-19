@@ -76,8 +76,8 @@ public class PermissionClass {
                 .addMethod(buildPermissionGrantedMethod())
                 .addMethod(buildPermissionDeniedMethod())
                 .addMethod(buildShouldPermissionRationalMethod())
-                .addMethod(buildShowPermissionRationalMethod());
-
+                .addMethod(buildShowPermissionRationalMethod())
+                .addMethod(buildUpdateTargetMethod());
 
         return JavaFile.builder(getPackageName(), typeBuilder.build()).build();
     }
@@ -86,15 +86,17 @@ public class PermissionClass {
         MethodSpec.Builder method = MethodSpec.constructorBuilder()
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(getTypeName(), "target", Modifier.FINAL)
-                .addStatement("this.target = target")
-                .addStatement("this.bitSet = new $T(1)", BitSet.class);
-        BitSet bitSet = new BitSet(1);
-        for (PermissionMethod m : mRationalMethodList) {
-            for (int requestCode : m.getPermissionRequestCodes()) {
-                if (bitSet.get(requestCode))
-                    continue;
-                bitSet.set(requestCode);
-                method.addStatement("this.bitSet.set($L)", requestCode);
+                .addStatement("this.target = target");
+        if (mRationalMethodList.size() > 0) {
+            method.addStatement("this.bitSet = new $T(1)", BitSet.class);
+            BitSet bitSet = new BitSet(1);
+            for (PermissionMethod m : mRationalMethodList) {
+                for (int requestCode : m.getPermissionRequestCodes()) {
+                    if (bitSet.get(requestCode))
+                        continue;
+                    bitSet.set(requestCode);
+                    method.addStatement("this.bitSet.set($L)", requestCode);
+                }
             }
         }
         return method.build();
@@ -150,8 +152,21 @@ public class PermissionClass {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(int.class, "requestCode")
                 .addAnnotation(Override.class)
-                .returns(TypeName.BOOLEAN)
-                .addStatement("return this.bitSet.get(requestCode)");
+                .returns(TypeName.BOOLEAN);
+        if (mRationalMethodList.size() > 0) {
+            method.addStatement("return this.bitSet.get(requestCode)");
+        } else {
+            method.addStatement("return false");
+        }
+        return method.build();
+    }
+
+    private MethodSpec buildUpdateTargetMethod() {
+        MethodSpec.Builder method = MethodSpec.methodBuilder("updateTarget")
+                .addModifiers(Modifier.PUBLIC)
+                .addParameter(TypeName.OBJECT, "target")
+                .addAnnotation(Override.class)
+                .addStatement("this.target = $T.castTarget(target, $T.class)", PERMISSIONS_CLASS, getTypeName());
         return method.build();
     }
 

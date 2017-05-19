@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
@@ -45,6 +46,18 @@ public class FirstFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("Test", " resume getActivity=" + getActivity());
+        requestCamera();
+    }
+
+    @RequestPermission(value = Manifest.permission.CAMERA, requestCode = 111)
+    void requestCamera() {
+        Toast.makeText(getActivity(), "requestCamera", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         Log.i("Test", "first onRequestPermissionsResult");
@@ -56,13 +69,15 @@ public class FirstFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    @PermissionGranted(511)
+    @PermissionGranted({511, 111})
     void method2() {
         Log.e("Test", "FirstFragment permission granted");
     }
 
-    @PermissionDenied(511)
+    @PermissionDenied({511, 111})
     void method3() {
         Log.e("Test", "FirstFragment permission denied");
+        Log.e("Test", "getActivity=" + getActivity());
+        getActivity().finish();
     }
 }

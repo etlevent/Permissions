@@ -131,8 +131,10 @@ public class PermissionUtils {
     private static Action createAction(Object target) {
         Class<?> targetClass = target.getClass();
         Action action = PERMISSIONS.get(targetClass);
-        if (action != null)
+        if (action != null) {
+            action.updateTarget(target);
             return action;
+        }
         Constructor<? extends Action> constructor = findPermissionConstructor(targetClass);
         if (constructor == null) {
             Log.e(TAG, "No Constructor Find for " + targetClass.getName());
@@ -173,5 +175,15 @@ public class PermissionUtils {
             throw new RuntimeException("cannot find constructor for " + className, e);
         }
         return constructor;
+    }
+
+    public static <T> T castTarget(Object target, Class<T> cls) {
+        try {
+            return cls.cast(target);
+        } catch (ClassCastException e) {
+            throw new IllegalStateException("Target '"
+                    + target
+                    + " was of the wrong type. See cause for more info.", e);
+        }
     }
 }

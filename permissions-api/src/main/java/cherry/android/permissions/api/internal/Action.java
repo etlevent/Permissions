@@ -12,4 +12,6 @@ public interface Action {
     boolean shouldPermissionRationale(int requestCode);
 
     void showPermissionRationale(int requestCode);
+
+    void updateTarget(Object target);
 }
