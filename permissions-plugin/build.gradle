@@ -1,5 +1,7 @@
 apply plugin: 'groovy'
 apply plugin: 'maven'
+//apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
 
 dependencies {
     //gradle sdk
@@ -23,12 +25,6 @@ tasks.withType(Javadoc) {
     }
 }
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-// user = properties.getProperty("bintray.user")
-//key = properties.getProperty("bintray.apikey")
-
-
 group = 'cherry.android.plugins'
 version = '1.0.0'
 uploadArchives {
@@ -38,30 +34,65 @@ uploadArchives {
         }
     }
 }
+def siteUrl = 'https://github.com/CherryLius/Permissions'
+def gitUrl = 'https://github.com/CherryLius/Permissions.git'
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
 
-//ext {
-//    bintrayRepo = 'maven'
-//    bintrayName = 'plugins'
-//
-//    publishedGroupId = 'cherry.android.plugins'
-//    libraryName = 'Permissions-plugin'
-//    artifact = 'permissions-plugin'
-//
-//    libraryDescription = 'permissions-plugin for aspectj.'
-//
-//    siteUrl = 'https://github.com/CherryLius/Permissions'
-//    gitUrl = 'https://github.com/CherryLius/Permissions.git'
-//
-//    libraryVersion = '1.0.0'
-//
-//    developerId = 'cherry'
-//    developerName = 'cherry'
-//    developerEmail = '767041809@qq.com'
-//
-//    licenseName = 'The Apache Software License, Version 2.0'
-//    licenseUrl = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-//    allLicenses = ["Apache-2.0"]
-//}
-//
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/installv1.gradle'
-//apply from: 'https://raw.githubusercontent.com/nuuneoi/JCenter/master/bintrayv1.gradle'
+                name 'permissions-plugin for aspectj.'
+                url siteUrl
+
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id 'cherry'
+                        name 'cherry'
+                        email '767041809@qq.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+task sourcesJar(type: Jar) {
+    from sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+    configurations = ['archives']
+    pkg {
+        repo = 'Maven'
+        name = 'permissions-plugin'
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}

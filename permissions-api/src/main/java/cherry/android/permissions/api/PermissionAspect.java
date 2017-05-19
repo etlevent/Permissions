@@ -56,7 +56,7 @@ public class PermissionAspect {
         if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
             PermissionUtils.permissionGranted(target, requestCode);
         } else {
-            PermissionUtils.permissionDenied(target, requestCode);
+            PermissionUtils.permissionDenied(target, requestCode, permissions);
         }
         return result;
     }

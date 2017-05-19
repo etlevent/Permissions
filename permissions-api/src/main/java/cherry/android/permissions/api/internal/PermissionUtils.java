@@ -91,21 +91,11 @@ public class PermissionUtils {
     }
 
     private static void requestPermissions(Activity activity, String[] permissions, int requestCode) {
-        if (!shouldShowRequestPermissionRational(activity, permissions)
-                && createAction(activity).shouldPermissionRationale(requestCode)) {
-            createAction(activity).showPermissionRationale(requestCode);
-        } else {
-            ActivityCompat.requestPermissions(activity, permissions, requestCode);
-        }
+        ActivityCompat.requestPermissions(activity, permissions, requestCode);
     }
 
     private static void requestPermissions(Fragment fragment, String[] permissions, int requestCode) {
-        if (!shouldShowRequestPermissionRational(fragment, permissions)
-                && createAction(fragment).shouldPermissionRationale(requestCode)) {
-            createAction(fragment).showPermissionRationale(requestCode);
-        } else {
-            fragment.requestPermissions(permissions, requestCode);
-        }
+        fragment.requestPermissions(permissions, requestCode);
     }
 
     public static Context getContext(Object target) {
@@ -122,16 +112,21 @@ public class PermissionUtils {
         }
     }
 
-    private static Map<Class<?>, Constructor<? extends Action>> PERMISSIONS_CONSTRUCTOR = new HashMap<>();
-    private static Map<Class<?>, Action> PERMISSIONS = new HashMap<>();
-
     public static void permissionGranted(Object target, int requestCode) {
         createAction(target).permissionGranted(requestCode);
     }
 
-    public static void permissionDenied(Object target, int requestCode) {
-        createAction(target).permissionDenied(requestCode);
+    public static void permissionDenied(Object target, int requestCode, String[] permissions) {
+        if (!shouldShowRequestPermissionRational(target, permissions)
+                && createAction(target).shouldPermissionRationale(requestCode)) {
+            createAction(target).showPermissionRationale(requestCode);
+        } else {
+            createAction(target).permissionDenied(requestCode);
+        }
     }
+
+    private static Map<Class<?>, Constructor<? extends Action>> PERMISSIONS_CONSTRUCTOR = new HashMap<>();
+    private static Map<Class<?>, Action> PERMISSIONS = new HashMap<>();
 
     private static Action createAction(Object target) {
         Class<?> targetClass = target.getClass();
@@ -159,7 +154,7 @@ public class PermissionUtils {
             if (cause instanceof Error) {
                 throw (Error) cause;
             }
-            throw new RuntimeException("Unable to create binding instance.", cause);
+            throw new RuntimeException("Unable to create permissions instance.", cause);
         }
     }
 

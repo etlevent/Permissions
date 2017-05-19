@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @RequestPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode = 1001)
     void testRequestPermission() {
-        Log.d("Test", "testRequestPermission");
+        Toast.makeText(this, "permission method", Toast.LENGTH_SHORT).show();
     }
 
     @PermissionGranted(1001)
