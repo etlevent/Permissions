@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,8 +12,9 @@ import cherry.android.permissions.annotations.PermissionDenied;
 import cherry.android.permissions.annotations.PermissionGranted;
 import cherry.android.permissions.annotations.PermissionNeverAskAgain;
 import cherry.android.permissions.annotations.RequestPermission;
+import cherry.android.permissions.base.BaseActivity;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Toast.makeText(this, "permissionDenied", Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
     @PermissionNeverAskAgain(1001)
     void permissionNeverAskAgain() {
-        Toast.makeText(this, "permissionGranted", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (Build.VERSION.SDK_INT >= 9) {
