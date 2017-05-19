@@ -11,7 +11,7 @@
 ```
 - 在需要申请权限的方法上添加注解`@RequestPermission`，申明需要的权限及requestCode，如下：
 ```
-	@Override
+    @Override
     public void onClick(View v) {
       testRequestPermission();
     }
@@ -23,7 +23,7 @@
 ```
 - 申请权限后同样在方法上添加`@PermissionGranted`，同时申明requestCode，即可实现权限被允许时的逻辑
 ```
-	@PermissionGranted(1001)
+    @PermissionGranted(1001)
     void permissionGranted() {
         Toast.makeText(this, "permissionGranted", Toast.LENGTH_SHORT).show();
         testRequestPermission();
@@ -31,7 +31,7 @@
 ```
 - 方法上添加注解`@PermissionDenied`，同时申明requestCode，即可实现权限被拒绝时的逻辑
 ```
-	@PermissionDenied(1001)
+    @PermissionDenied(1001)
     void permissionDenied() {
         Toast.makeText(this, "permissionDenied", Toast.LENGTH_SHORT).show();
     }
@@ -39,7 +39,7 @@
 - 方法上添加注解`@PermissionNeverAskAgain`，同时申明requestCode，则可实现用户勾选**Never Ask Again**后的相关逻辑，通常提示用户权限的用途及跳转到权限管理界面等等。
 *Tips: * 若没有添加此注解会回调到`@PermissionDenied`的方法
 ```
-	@PermissionNeverAskAgain(1001)
+    @PermissionNeverAskAgain(1001)
     void permissionNeverAskAgain() {
         Intent intent = new Intent();
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
