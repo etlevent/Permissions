@@ -1,15 +1,10 @@
 package cherry.android.permissions;
 
-import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 
-import cherry.android.permissions.annotations.PermissionDenied;
-import cherry.android.permissions.annotations.PermissionGranted;
-import cherry.android.permissions.annotations.RequestPermission;
 import cherry.android.permissions.base.BaseActivity;
 
 /**
@@ -32,18 +27,18 @@ public class FragmentActivity extends BaseActivity implements View.OnClickListen
         finish();
     }
 
-    @RequestPermission(value = Manifest.permission.CALL_PHONE, requestCode = 1111)
-    void method1() {
-        Log.i("Test", "fragment act request");
-    }
-
-    @PermissionGranted(1111)
-    void method2() {
-        Log.i("Test", "fragment act grant");
-    }
-
-    @PermissionDenied(1111)
-    void method3() {
-        Log.i("Test", "fragment act denied");
-    }
+//    @RequestPermission(value = Manifest.permission.CALL_PHONE, requestCode = 1111)
+//    void method1() {
+//        Log.i("Test", "fragment act request");
+//    }
+//
+//    @PermissionGranted(1111)
+//    void method2() {
+//        Log.i("Test", "fragment act grant");
+//    }
+//
+//    @PermissionDenied(1111)
+//    void method3() {
+//        Log.i("Test", "fragment act denied");
+//    }
 }

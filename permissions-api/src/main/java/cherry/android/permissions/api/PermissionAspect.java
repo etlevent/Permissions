@@ -23,6 +23,8 @@ public class PermissionAspect {
     private static final String REQUEST_PERMISSION_POINTCUT_CONSTRUCTOR =
             "execution(@cherry.android.permissions.annotations.RequestPermission *.new(..))";
 
+    private Object mLastTarget;
+
     @Pointcut(REQUEST_PERMISSION_POINTCUT_METHOD + " && @annotation(args)")
     public void requestPermissionMethod(RequestPermission args) {
     }
@@ -47,8 +49,8 @@ public class PermissionAspect {
         }
     }
 
-    private Object mLastTarget;
-
+    //    int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
+    //    @Around("execution(* *.onRequestPermissionsResult(..)) && args(requestCode, permissions)")
     @Around("execution(* *.onRequestPermissionsResult(..))")
     public Object requestPermissionsRequest(final ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = joinPoint.proceed();
@@ -59,9 +61,9 @@ public class PermissionAspect {
         Object target = joinPoint.getTarget();
         if (mLastTarget != null && mLastTarget.equals(target)) {
             if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
-                PermissionUtils.permissionGranted(target, requestCode);
+                Permissions.permissionGranted(target, requestCode);
             } else {
-                PermissionUtils.permissionDenied(target, requestCode, permissions);
+                Permissions.permissionDenied(target, requestCode, permissions);
             }
             mLastTarget = null;
         }
@@ -91,18 +93,14 @@ public class PermissionAspect {
 //        Log.e(TAG, "test on " + joinPoint.getSignature());
 //    }
 
-//        private static final String POINTCUT_ACTIVITY_PERMISSIONS_RESULT_METHOD =
-//            "execution(* android.app.Activity+.onRequestPermissionsResult(..))" +
-//                    " || execution(* android.app.Activity.onRequestPermissionsResult(..))";
+//    private static final String POINTCUT_ACTIVITY_PERMISSIONS_RESULT_METHOD =
+//            "execution(* android.app.Activity+.onRequestPermissionsResult(..))";
 //    private static final String POINTCUT_FRAGMENT_ACTIVITY_PERMISSIONS_RESULT_METHOD =
-//            "execution(* android.support.v4.app.FragmentActivity+.onRequestPermissionsResult(..))" +
-//                    " || execution(* android.support.v4.app.FragmentActivity.onRequestPermissionsResult(..))";
+//            "execution(* android.support.v4.app.FragmentActivity+.onRequestPermissionsResult(..))";
 //    private static final String POINTCUT_FRAGMENT_PERMISSIONS_RESULT_METHOD =
-//            "execution(* android.app.Fragment+.onRequestPermissionsResult(..))" +
-//                    " || execution(* android.app.Fragment.onRequestPermissionsResult(..))";
+//            "execution(* android.app.Fragment+.onRequestPermissionsResult(..))";
 //    private static final String POINTCUT_SUPPORT_FRAGMENT_PERMISSIONS_RESULT_METHOD =
-//            "execution(* android.support.v4.app.Fragment+.onRequestPermissionsResult(..))" +
-//                    " || execution(* android.support.v4.app.Fragment.onRequestPermissionsResult(..))";
+//            "execution(* android.support.v4.app.Fragment+.onRequestPermissionsResult(..))";
 //
 //    //args
 //    @Pointcut(POINTCUT_ACTIVITY_PERMISSIONS_RESULT_METHOD)
