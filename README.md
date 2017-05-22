@@ -105,4 +105,4 @@ dependencies {
 部分代码参照[PermissionsDispatcher](https://github.com/hotchemi/PermissionsDispatcher)，表示感谢，THANKS
 
 # 结束语
-项目代码比较简单，主要是学习AOP过程的一个小产品，主要是希望能有大神指点讨论，欢迎提Issues.
+项目代码比较简单，学习AOP过程的一个小产品，主要是希望能有大神指点讨论，欢迎提Issues.

@@ -49,8 +49,6 @@ public class PermissionAspect {
         }
     }
 
-    //    int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults
-    //    @Around("execution(* *.onRequestPermissionsResult(..)) && args(requestCode, permissions)")
     @Around("execution(* *.onRequestPermissionsResult(..))")
     public Object requestPermissionsRequest(final ProceedingJoinPoint joinPoint) throws Throwable {
         Object result = joinPoint.proceed();
