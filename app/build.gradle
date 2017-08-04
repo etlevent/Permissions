@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'permissions.plugin'
+//apply plugin: 'android-aspectjx'
 
 android {
     compileSdkVersion 25
@@ -28,7 +28,7 @@ dependencies {
     })
     compile project(':permissions-annotations')
     compile project(':permissions-api')
-    apt project(':permissions-compiler')
+    annotationProcessor project(':permissions-compiler')
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

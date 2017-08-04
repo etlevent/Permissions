@@ -34,10 +34,10 @@ class PermissionsPlugin implements Plugin<Project> {
         project.extensions.create('permission', PermissionsExtension)
 
         variants.all { variant ->
-            if (!variant.buildType.isDebuggable()) {
+            /*if (!variant.buildType.isDebuggable()) {
                 log.debug("Skipping non-debuggable build type '${variant.buildType.name}'.")
                 return;
-            } else if (!project.permission.enabled) {
+            } else*/ if (!project.permission.enabled) {
                 log.debug("PermissionPlugin is not disabled.")
                 return;
             }

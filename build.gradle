@@ -5,18 +5,18 @@ buildscript {
         jcenter()
         mavenCentral()
         //本地Maven仓库地址
-//        maven {
-//            url uri('F:/Android/repos')
-//        }
-        //私有仓库
         maven {
-            url 'https://dl.bintray.com/dingling/Maven'
+            url uri('F:/Android/repos')
         }
+        //私有仓库
+//        maven {
+//            url 'https://dl.bintray.com/dingling/Maven'
+//        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'cherry.android.plugins:permissions-plugin:1.0.0'
+        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
         //自动化maven打包插件
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         //自动上传至Bintray平台插件
