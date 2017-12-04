@@ -16,7 +16,6 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
         classpath 'cherry.android.plugins:permissions-plugin:1.0.0'
-        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:1.0.10'
         //自动化maven打包插件
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
         //自动上传至Bintray平台插件

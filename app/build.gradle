@@ -1,6 +1,5 @@
 apply plugin: 'com.android.application'
 apply plugin: 'permissions.plugin'
-//apply plugin: 'android-aspectjx'
 
 android {
     compileSdkVersion 25
