@@ -28,7 +28,7 @@ class PermissionsPlugin implements Plugin<Project> {
         }
 
         project.dependencies {
-            compile 'org.aspectj:aspectjrt:1.8.10'
+            compile 'org.aspectj:aspectjrt:1.8.12'
         }
 
         project.extensions.create('permission', PermissionsExtension)

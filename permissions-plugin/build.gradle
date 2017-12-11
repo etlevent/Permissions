@@ -30,7 +30,7 @@ version = '1.0.0'
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: uri('F:/Android/repos'))
+            repository(url: uri(LOCAL_ANDROID_REPOS))
         }
     }
 }

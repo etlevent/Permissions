@@ -77,7 +77,7 @@ public class PermissionClass {
                 .addMethod(buildPermissionDeniedMethod())
                 .addMethod(buildShouldPermissionRationalMethod())
                 .addMethod(buildShowPermissionRationalMethod())
-                .addMethod(buildUpdateTargetMethod());
+                /*.addMethod(buildUpdateTargetMethod())*/;
 
         return JavaFile.builder(getPackageName(), typeBuilder.build()).build();
     }

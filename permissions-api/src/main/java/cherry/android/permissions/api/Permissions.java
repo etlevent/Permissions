@@ -1,7 +1,5 @@
 package cherry.android.permissions.api;
 
-import android.util.Log;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -17,50 +15,31 @@ import static cherry.android.permissions.api.internal.PermissionUtils.shouldShow
 
 public final class Permissions {
 
-    private static final String TAG = "Permissions";
-
     private static Map<Class<?>, Constructor<? extends Action>> PERMISSIONS_CONSTRUCTOR = new HashMap<>();
-    private static Map<Class<?>, Action> PERMISSIONS = new HashMap<>();
 
     public static void permissionGranted(Object target, int requestCode) {
         Action action = createAction(target);
-        if (action != null) {
-            action.permissionGranted(requestCode);
-        } else {
-            Log.w(TAG, "target's proxy class " + target.getClass() + "_Permissions is not found");
-        }
+        action.permissionGranted(requestCode);
     }
 
     public static void permissionDenied(Object target, int requestCode, String[] permissions) {
         Action action = createAction(target);
-        if (action != null) {
-            if (!shouldShowRequestPermissionRational(target, permissions)
-                    && action.shouldPermissionRationale(requestCode)) {
-                action.showPermissionRationale(requestCode);
-            } else {
-                action.permissionDenied(requestCode);
-            }
+        if (!shouldShowRequestPermissionRational(target, permissions)
+                && action.shouldPermissionRationale(requestCode)) {
+            action.showPermissionRationale(requestCode);
         } else {
-            Log.w(TAG, "target's proxy class " + target.getClass() + "_Permissions is not found");
+            action.permissionDenied(requestCode);
         }
     }
 
     private static Action createAction(Object target) {
         Class<?> targetClass = target.getClass();
-        Action action = PERMISSIONS.get(targetClass);
-        if (action != null) {
-            action.updateTarget(target);
-            return action;
-        }
         Constructor<? extends Action> constructor = findPermissionConstructor(targetClass);
         if (constructor == null) {
-            Log.e(TAG, "No Constructor Find for " + targetClass.getName());
-            return null;
+            throw new IllegalArgumentException("No Constructor Find for " + targetClass.getName());
         }
         try {
-            action = constructor.newInstance(target);
-            PERMISSIONS.put(targetClass, action);
-            return action;
+            return constructor.newInstance(target);
         } catch (InstantiationException e) {
             throw new RuntimeException("Unable to invoke " + constructor, e);
         } catch (IllegalAccessException e) {

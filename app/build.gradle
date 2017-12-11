@@ -1,13 +1,16 @@
 apply plugin: 'com.android.application'
-apply plugin: 'permissions.plugin'
+//apply plugin: 'permissions.plugin'
+//apply plugin: 'com.archinamon.aspectj'
+//apply plugin: 'com.archinamon.aspectj-ext'
+apply plugin: 'android.aspectj'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
     defaultConfig {
         applicationId "cherry.android.permissions"
         minSdkVersion 19
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -18,7 +21,23 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
 }
+//aspectj {
+//    ajc '1.8.10'
+//    debugInfo true
+//    ajcArgs << '-referenceInfo' << '-warn:deprecation'
+//    excludeJar 'permissions-annotations', 'permissions-compiler'
+//}
+//aspectjOptions {
+//    ajrt '1.8.12'
+//    includeJars 'android.arch.lifecycle'
+//    ajcArgs '-nowarn'
+//    excludeJars 'appcompat'
+//}
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -28,8 +47,8 @@ dependencies {
     compile project(':permissions-annotations')
     compile project(':permissions-api')
     annotationProcessor project(':permissions-compiler')
-    compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:appcompat-v7:26+'
+    compile 'com.android.support:support-v4:26+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }
