@@ -21,6 +21,7 @@ import android.util.Log;
 
 public class PermissionUtils {
 
+    public static final String TAG = "PermissionUtils";
     private static final String FRAGMENT_TAG = "leon.android.permissions";
 
     public static boolean hasSelfPermissions(Context context, String... permissions) {
@@ -54,21 +55,28 @@ public class PermissionUtils {
     }
 
     public static void requestPermissions(Object target, String[] permissions, int requestCode) {
+        Log.v(TAG, "start requestPermissions for target=" + target);
         Activity activity = getActivity(target);
-        Log.d("Permission", "activity=" + activity);
-        if (activity instanceof FragmentActivity) {
-            PermissionFragmentV4 fragmentV4 = getPermissionFragmentV4((FragmentActivity) activity);
-            fragmentV4.setTarget(target);
-            fragmentV4.requestPermissions(permissions, requestCode);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PermissionFragment fragment = getPermissionFragment(activity);
+            fragment.setTarget(target);
+            fragment.requestPermissions(permissions, requestCode);
         } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                PermissionFragment fragment = getPermissionFragment(activity);
-                fragment.setTarget(target);
-                fragment.requestPermissions(permissions, requestCode);
-            } else {
-                throw new IllegalArgumentException(android.app.Fragment.class + ".requestPermissions(...) require api 23.");
-            }
+            throw new IllegalArgumentException(android.app.Fragment.class + ".requestPermissions(...) require api 23.");
         }
+//        if (activity instanceof FragmentActivity) {
+//            PermissionFragmentV4 fragmentV4 = getPermissionFragmentV4((FragmentActivity) activity);
+//            fragmentV4.setTarget(target);
+//            fragmentV4.requestPermissions(permissions, requestCode);
+//        } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                PermissionFragment fragment = getPermissionFragment(activity);
+//                fragment.setTarget(target);
+//                fragment.requestPermissions(permissions, requestCode);
+//            } else {
+//                throw new IllegalArgumentException(android.app.Fragment.class + ".requestPermissions(...) require api 23.");
+//            }
+//        }
     }
 
     private static boolean shouldShowRequestPermissionRationalInternal(Activity activity, String... permissions) {
@@ -93,14 +101,14 @@ public class PermissionUtils {
     }
 
     private static PermissionFragmentV4 getPermissionFragmentV4(@NonNull FragmentActivity activity) {
-        android.support.v4.app.FragmentManager supportFM = activity.getSupportFragmentManager();
-        PermissionFragmentV4 fragmentV4 = (PermissionFragmentV4) supportFM.findFragmentByTag(FRAGMENT_TAG);
+        android.support.v4.app.FragmentManager supportFragmentManager = activity.getSupportFragmentManager();
+        PermissionFragmentV4 fragmentV4 = (PermissionFragmentV4) supportFragmentManager.findFragmentByTag(FRAGMENT_TAG);
         if (fragmentV4 == null) {
             fragmentV4 = new PermissionFragmentV4();
-            supportFM.beginTransaction()
+            supportFragmentManager.beginTransaction()
                     .add(fragmentV4, FRAGMENT_TAG)
                     .commitAllowingStateLoss();
-            supportFM.executePendingTransactions();
+            supportFragmentManager.executePendingTransactions();
         }
         return fragmentV4;
     }

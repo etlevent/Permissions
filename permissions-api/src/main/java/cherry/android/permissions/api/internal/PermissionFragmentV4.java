@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.util.Log;
 
 import cherry.android.permissions.api.Permissions;
@@ -16,12 +17,12 @@ public class PermissionFragmentV4 extends Fragment {
 
     private static final String TAG = "Permission";
 
-    private Object target;
+    private Permissions mPermissions;
 
     private StringBuilder mBuilder;
 
     public void setTarget(@NonNull Object target) {
-        this.target = target;
+        mPermissions = new Permissions(target);
     }
 
     @Override
@@ -35,10 +36,10 @@ public class PermissionFragmentV4 extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         logMessage(permissions);
-        if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
-            Permissions.permissionGranted(target, requestCode);
+        if (PermissionUtils.hasSelfPermissions(getActivity(), permissions)) {
+            mPermissions.granted(requestCode);
         } else {
-            Permissions.permissionDenied(target, requestCode, permissions);
+            mPermissions.denied(requestCode, permissions);
         }
     }
 
@@ -46,15 +47,12 @@ public class PermissionFragmentV4 extends Fragment {
         if (mBuilder.length() > 0) {
             mBuilder.delete(0, mBuilder.length());
         }
-        mBuilder.append("v4 onRequestPermissionsResult:\n")
-                .append("permissions=[");
-        for (String permission : permissions) {
-            mBuilder.append(permission)
-                    .append('\t');
-        }
-        mBuilder.append("];\n")
+        mBuilder.append("onRequestPermissionsResult:\n")
+                .append("permissions=[")
+                .append(TextUtils.join(",", permissions))
+                .append("];\n")
                 .append("target=")
-                .append(target);
+                .append(mPermissions.getTarget());
         Log.d(TAG, mBuilder.toString());
     }
 }

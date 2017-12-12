@@ -36,26 +36,31 @@ public class SecondFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onResume() {
         super.onResume();
-        requestPermission();
+//        requestPermission();
     }
 
     @Override
     public void onClick(View v) {
-        requestPermission();
+        requestLocation();
+    }
+
+    @RequestPermission(value = Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode = 1003)
+    void requestLocation() {
+        Log.i(MainActivity.TAG, "requestLocation permission");
     }
 
     @RequestPermission(value = Manifest.permission.CALL_PHONE, requestCode = 1002)
     void requestPermission() {
-        Log.e("Test", "secondFragment requestPermission");
+        Log.e(MainActivity.TAG, "secondFragment requestPermission");
     }
 
-    @PermissionGranted(1002)
+    @PermissionGranted({1002, 1003})
     void method1() {
-        Log.e("Test", "secondFragment granted");
+        Log.e(MainActivity.TAG, "secondFragment granted");
     }
 
-    @PermissionDenied(1002)
+    @PermissionDenied({1002, 1003})
     void method2() {
-        Log.e("Test", "secondFragment denied");
+        Log.e(MainActivity.TAG, "secondFragment denied");
     }
 }

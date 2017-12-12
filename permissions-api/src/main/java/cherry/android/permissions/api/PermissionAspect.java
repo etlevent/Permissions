@@ -1,5 +1,6 @@
 package cherry.android.permissions.api;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -45,36 +46,13 @@ public class PermissionAspect {
         }
     }
 
-//    @Around("execution(* *.onRequestPermissionsResult(..))")
-//    public Object requestPermissionsRequest(final ProceedingJoinPoint joinPoint) throws Throwable {
-//        Object result = joinPoint.proceed();
-//        Object[] args = joinPoint.getArgs();
-//        int requestCode = (int) args[0];
-//        String[] permissions = (String[]) args[1];
-//        Log.i(TAG, "requestPermissionsResult " + requestCode + ",permissions:" + permissions[0]);
-//        Object target = joinPoint.getTarget();
-//        if (mLastTarget != null && mLastTarget.equals(target)) {
-//            if (PermissionUtils.hasSelfPermissions(PermissionUtils.getContext(target), permissions)) {
-//                Permissions.permissionGranted(target, requestCode);
-//            } else {
-//                Permissions.permissionDenied(target, requestCode, permissions);
-//            }
-//            mLastTarget = null;
-//        }
-//        return result;
-//    }
-
     private static String buildPermissionMessage(String[] permissions, int code) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PermissionUtils:[\n");
-        for (String permission : permissions) {
-            builder.append("\t\t")
-                    .append(permission)
-                    .append(",\n");
-        }
-        builder.append("],\n")
+        return new StringBuilder()
+                .append("PermissionUtils:\n[")
+                .append(TextUtils.join(",", permissions))
+                .append("];\n")
                 .append("requestCode=" + code)
-                .append("\n");
-        return builder.toString();
+                .append("\n")
+                .toString();
     }
 }

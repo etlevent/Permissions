@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Created by Administrator on 2017/5/18.
+ * value: requestCode
  */
 @Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)

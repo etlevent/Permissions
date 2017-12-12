@@ -16,6 +16,8 @@ import cherry.android.permissions.base.BaseActivity;
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
 
+    public static final String TAG = "Permissions";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,13 +42,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @PermissionGranted(1001)
     void permissionGranted() {
-        Toast.makeText(this, "permissionGranted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "granted", Toast.LENGTH_SHORT).show();
         testRequestPermission();
     }
 
     @PermissionDenied(1001)
     void permissionDenied() {
-        Toast.makeText(this, "permissionDenied", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "denied", Toast.LENGTH_SHORT).show();
     }
 
     @PermissionNeverAskAgain(1001)
