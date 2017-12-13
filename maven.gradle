@@ -1,0 +1,14 @@
+def isJava = project.plugins.hasPlugin(JavaPlugin)
+if (isJava) {
+    apply plugin: 'maven'
+} else {
+    apply plugin: 'com.github.dcendents.android-maven'
+}
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            repository(url: uri(LOCAL_ANDROID_REPOS))
+        }
+    }
+}

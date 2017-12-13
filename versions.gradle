@@ -1,0 +1,34 @@
+ext.config = [:]
+
+def config = [:]
+
+def versions = [:]
+versions.group = 'cherry.android'
+versions.version = '2.0.0'
+versions.siteUrl = 'https://github.com/LeonardoLaus/Permissions'
+versions.gitUrl = 'https://github.com/LeonardoLaus/Permissions.git'
+config.versions = versions
+
+def license = [:]
+license.name = 'The Apache Software License, Version 2.0'
+license.url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+config.license = license
+
+def developer = [:]
+developer.id = 'leon'
+developer.name = 'leon'
+developer.email = '767041809@qq.com'
+config.developer = developer
+
+def bintray = [:]
+bintray.user = getLocalProperties().getProperty('bintray.user')
+bintray.apikey = getLocalProperties().getProperty('bintray.apikey')
+config.bintray = bintray
+
+ext.config = config
+
+def getLocalProperties() {
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    return properties
+}

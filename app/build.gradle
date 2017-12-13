@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
-//apply plugin: 'permissions.plugin'
+apply plugin: 'permissions.plugin'
 //apply plugin: 'com.archinamon.aspectj'
 //apply plugin: 'com.archinamon.aspectj-ext'
-apply plugin: 'android.aspectj'
+//apply plugin: 'android.aspectj'
 
 android {
     compileSdkVersion 26
@@ -44,19 +44,10 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile project(':permissions-annotations')
-    compile project(':permissions-api')
-    annotationProcessor project(':permissions-compiler')
+    implementation 'cherry.android:permissions-api:2.0.0'
+    annotationProcessor 'cherry.android:permissions-compiler:2.0.0'
     compile 'com.android.support:appcompat-v7:26+'
     compile 'com.android.support:support-v4:26+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
-}
-
-tasks.withType(Javadoc) {
-    options {
-        encoding 'UTF-8'
-        charSet 'UTF-8'
-        links "http://docs.oracle.com/javase/7/docs/api"
-    }
 }

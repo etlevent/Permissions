@@ -1,0 +1,87 @@
+apply plugin: 'com.jfrog.bintray'
+def isJava = project.plugins.hasPlugin(JavaPlugin)
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+
+                name project.name
+                url config.versions.siteUrl
+
+                licenses {
+                    license {
+                        name config.license.name
+                        url config.license.url
+                    }
+                }
+
+                developers {
+                    developer {
+                        id config.developer.id
+                        name config.developer.name
+                        email config.developer.email
+                    }
+                }
+                scm {
+                    connection config.versions.gitUrl
+                    developerConnection config.versions.gitUrl
+                    url config.versions.siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    if (isJava) {
+        from sourceSets.main.java.srcDirs
+    } else {
+        from android.sourceSets.main.java.srcDirs
+    }
+    classifier = 'sources'
+}
+if (!isJava) {
+    task javadoc(type: Javadoc) {
+        source = android.sourceSets.main.java.srcDirs
+        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    }
+}
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+tasks.withType(Javadoc) {
+    options {
+        encoding 'UTF-8'
+        charSet 'UTF-8'
+        links "http://docs.oracle.com/javase/7/docs/api"
+        if (!isJava) {
+            linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
+        }
+    }
+}
+
+bintray {
+    user = config.bintray.user
+    key = config.bintray.apikey
+    configurations = ['archives']
+    pkg {
+        repo = 'Maven'
+        name = project.name
+        websiteUrl = config.versions.siteUrl
+        vcsUrl = config.versions.gitUrl
+        licenses = ["Apache-2.0"]
+        publish = true
+    }
+}
+
+println("project.name=${project.name}")
