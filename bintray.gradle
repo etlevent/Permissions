@@ -1,39 +1,6 @@
 apply plugin: 'com.jfrog.bintray'
 def isJava = project.plugins.hasPlugin(JavaPlugin)
 
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-
-                name project.name
-                url config.versions.siteUrl
-
-                licenses {
-                    license {
-                        name config.license.name
-                        url config.license.url
-                    }
-                }
-
-                developers {
-                    developer {
-                        id config.developer.id
-                        name config.developer.name
-                        email config.developer.email
-                    }
-                }
-                scm {
-                    connection config.versions.gitUrl
-                    developerConnection config.versions.gitUrl
-                    url config.versions.siteUrl
-                }
-            }
-        }
-    }
-}
-
 task sourcesJar(type: Jar) {
     if (isJava) {
         from sourceSets.main.java.srcDirs
@@ -74,6 +41,9 @@ bintray {
     user = config.bintray.user
     key = config.bintray.apikey
     configurations = ['archives']
+
+    override = true //[Default: false] Whether to override version artifacts already published
+
     pkg {
         repo = 'Maven'
         name = project.name
@@ -81,7 +51,19 @@ bintray {
         vcsUrl = config.versions.gitUrl
         issueTrackerUrl = config.versions.issueTrackerUrl
         licenses = ["Apache-2.0"]
-        publish = true
+        publicDownloadNumbers = true
+        githubRepo = 'bintray/gradle-bintray-plugin' //Optional Github repository
+        githubReleaseNotesFile = 'README.md' //Optional Github readme file
+
+        dryRun = false //[Default: false] Whether to run this as dry-run, without deploying
+        publish = true //[Default: false] Whether version should be auto published after an upload
+
+        version {
+            name = config.versions.version
+            desc = "release ${this.version}"
+            released = new Date()
+            vcsTag = config.versions.version
+        }
     }
 }
 
