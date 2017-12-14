@@ -7,8 +7,8 @@ dependencies {
     compile project(':permissions-annotations')
 }
 
-sourceCompatibility = "1.7"
-targetCompatibility = "1.7"
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
 
 apply from: '../maven.gradle'
 apply from: '../bintray.gradle'

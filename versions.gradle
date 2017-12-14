@@ -2,11 +2,14 @@ ext.config = [:]
 
 def config = [:]
 
+def git = 'https://github.com/LeonardoLaus'
+
 def versions = [:]
 versions.group = 'cherry.android'
 versions.version = '2.0.0'
-versions.siteUrl = 'https://github.com/LeonardoLaus/Permissions'
-versions.gitUrl = 'https://github.com/LeonardoLaus/Permissions.git'
+versions.siteUrl = "${git}/Permissions"
+versions.gitUrl = "${versions.siteUrl}.git"
+versions.issueTrackerUrl = "${versions.siteUrl}/issues"
 config.versions = versions
 
 def license = [:]

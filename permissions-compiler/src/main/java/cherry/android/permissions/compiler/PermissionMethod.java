@@ -5,6 +5,7 @@ import com.squareup.javapoet.CodeBlock;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.BitSet;
 import java.util.List;
 
 import javax.lang.model.element.Element;
@@ -31,6 +32,11 @@ public class PermissionMethod {
         try {
             Method method = annotationClass.getDeclaredMethod("value");
             mPermissionRequestCode = (int[]) method.invoke(annotation);
+            if (distinct()) {
+                throw new RuntimeException(String.format("Method %s with @%s contains same requestCode",
+                        getMethodName(),
+                        annotationClass.getSimpleName()));
+            }
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -44,9 +50,21 @@ public class PermissionMethod {
         return mElement.getSimpleName().toString();
     }
 
-
     public int[] getPermissionRequestCodes() {
         return mPermissionRequestCode;
+    }
+
+    private boolean distinct() {
+        if (mPermissionRequestCode.length <= 1)
+            return false;
+        BitSet bitSet = new BitSet(1);
+        for (int requestCode : mPermissionRequestCode) {
+            if (bitSet.get(requestCode)) {
+                return true;
+            }
+            bitSet.set(requestCode);
+        }
+        return false;
     }
 
     public CodeBlock generateCode() {

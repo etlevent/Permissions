@@ -79,6 +79,7 @@ bintray {
         name = project.name
         websiteUrl = config.versions.siteUrl
         vcsUrl = config.versions.gitUrl
+        issueTrackerUrl = config.versions.issueTrackerUrl
         licenses = ["Apache-2.0"]
         publish = true
     }

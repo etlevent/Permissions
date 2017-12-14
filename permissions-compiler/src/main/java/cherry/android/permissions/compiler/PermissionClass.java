@@ -9,10 +9,15 @@ import com.squareup.javapoet.TypeSpec;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.util.Elements;
+
+import cherry.android.permissions.annotations.PermissionDenied;
+import cherry.android.permissions.annotations.PermissionGranted;
+import cherry.android.permissions.annotations.PermissionNeverAskAgain;
 
 /**
  * Created by Administrator on 2017/5/15.
@@ -36,15 +41,44 @@ public class PermissionClass {
     }
 
     public void addPermissionGrantedMethod(PermissionMethod method) {
+        if (distinct(method, mGrantedMethodList)) {
+            throw new IllegalArgumentException(logMessage(method.getMethodName(), PermissionGranted.class.getSimpleName()));
+        }
         mGrantedMethodList.add(method);
     }
 
     public void addPermissionDeniedMethod(PermissionMethod method) {
+        if (distinct(method, mDeniedMethodList)) {
+            throw new IllegalArgumentException(logMessage(method.getMethodName(), PermissionDenied.class.getSimpleName()));
+        }
         mDeniedMethodList.add(method);
     }
 
     public void addPermissionRationalMethod(PermissionMethod method) {
+        if (distinct(method, mRationalMethodList)) {
+            throw new IllegalArgumentException(logMessage(method.getMethodName(), PermissionNeverAskAgain.class.getSimpleName()));
+        }
         mRationalMethodList.add(method);
+    }
+
+    private String logMessage(String methodName, String annotationName) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("RequestCode already used.")
+                .append("The method ")
+                .append(methodName)
+                .append("() in class: ")
+                .append(getClassName())
+                .append(" Annotation with @")
+                .append(annotationName);
+        return builder.toString();
+    }
+
+    private static boolean distinct(final PermissionMethod method,
+                                    List<PermissionMethod> methodList) {
+        return methodList.stream()
+                .flatMapToInt(method1 -> IntStream.of(method1.getPermissionRequestCodes()))
+                .anyMatch(value -> IntStream.of(method.getPermissionRequestCodes())
+                        .anyMatch(value2 -> value == value2));
     }
 
     private String getPackageName() {
@@ -70,15 +104,16 @@ public class PermissionClass {
         TypeSpec.Builder typeBuilder = TypeSpec.classBuilder(getClassName() + "_Permissions")
                 .addSuperinterface(ACTION_CLASS)
                 .addModifiers(Modifier.PUBLIC)
-                .addField(getTypeName(), "target", Modifier.PRIVATE)
-                .addField(BitSet.class, "bitSet", Modifier.PRIVATE)
+                .addField(getTypeName(), "target", Modifier.PRIVATE, Modifier.FINAL)
                 .addMethod(buildConstructorMethod())
                 .addMethod(buildPermissionGrantedMethod())
                 .addMethod(buildPermissionDeniedMethod())
                 .addMethod(buildShouldPermissionRationalMethod())
-                .addMethod(buildShowPermissionRationalMethod())
-                /*.addMethod(buildUpdateTargetMethod())*/;
+                .addMethod(buildShowPermissionRationalMethod());
 
+        if (!mRationalMethodList.isEmpty()) {
+            typeBuilder.addField(BitSet.class, "bitSet", Modifier.PRIVATE);
+        }
         return JavaFile.builder(getPackageName(), typeBuilder.build()).build();
     }
 
@@ -87,7 +122,7 @@ public class PermissionClass {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(getTypeName(), "target", Modifier.FINAL)
                 .addStatement("this.target = target");
-        if (mRationalMethodList.size() > 0) {
+        if (!mRationalMethodList.isEmpty()) {
             method.addStatement("this.bitSet = new $T(1)", BitSet.class);
             BitSet bitSet = new BitSet(1);
             for (PermissionMethod m : mRationalMethodList) {
@@ -107,7 +142,7 @@ public class PermissionClass {
                 .addModifiers(Modifier.PUBLIC)
                 .addParameter(int.class, "requestCode")
                 .addAnnotation(Override.class);
-        if (mGrantedMethodList.size() > 0) {
+        if (!mGrantedMethodList.isEmpty()) {
             method.beginControlFlow("switch(requestCode)");
             for (PermissionMethod permissionMethod : mGrantedMethodList) {
                 method.addCode(permissionMethod.generateCode());
@@ -123,7 +158,7 @@ public class PermissionClass {
                 .addParameter(int.class, "requestCode")
                 .addAnnotation(Override.class);
         method.beginControlFlow("switch(requestCode)");
-        if (mDeniedMethodList.size() > 0) {
+        if (!mDeniedMethodList.isEmpty()) {
             for (PermissionMethod permissionMethod : mDeniedMethodList) {
                 method.addCode(permissionMethod.generateCode());
             }
