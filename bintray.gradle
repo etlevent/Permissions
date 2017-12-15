@@ -1,5 +1,7 @@
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
 def isJava = project.plugins.hasPlugin(JavaPlugin)
+def artifactId = getArtifactId()
 
 task sourcesJar(type: Jar) {
     if (isJava) {
@@ -20,7 +22,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
 }
 
-
 artifacts {
     archives javadocJar
     archives sourcesJar
@@ -37,6 +38,45 @@ tasks.withType(Javadoc) {
     }
 }
 
+def getArtifactId() {
+    def selfConfig = project.hasProperty('artifactId')
+    def artifactId = selfConfig ? project.artifactId : project.name
+    println "project artifactId now is ${artifactId}. Use ext {artifactId = xxx} to customizing."
+    return artifactId
+}
+
+install {
+    repositories.mavenInstaller {
+        pom {
+            project {
+                packaging 'aar'
+
+                name artifactId
+                url config.versions.siteUrl
+
+                licenses {
+                    license {
+                        name config.license.name
+                        url config.license.url
+                    }
+                }
+
+                developers {
+                    developer {
+                        id config.developer.id
+                        name config.developer.name
+                        email config.developer.email
+                    }
+                }
+                scm {
+                    connection config.versions.gitUrl
+                    developerConnection config.versions.gitUrl
+                    url config.versions.siteUrl
+                }
+            }
+        }
+    }
+}
 bintray {
     user = config.bintray.user
     key = config.bintray.apikey
@@ -46,13 +86,14 @@ bintray {
 
     pkg {
         repo = 'Maven'
-        name = project.name
+        name = artifactId
+        description = config.versions.desc
         websiteUrl = config.versions.siteUrl
         vcsUrl = config.versions.gitUrl
         issueTrackerUrl = config.versions.issueTrackerUrl
         licenses = ["Apache-2.0"]
         publicDownloadNumbers = true
-        githubRepo = 'bintray/gradle-bintray-plugin' //Optional Github repository
+        githubRepo = config.versions.githubRepo //Optional Github repository
         githubReleaseNotesFile = 'README.md' //Optional Github readme file
 
         dryRun = false //[Default: false] Whether to run this as dry-run, without deploying

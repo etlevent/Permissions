@@ -4,38 +4,6 @@ if (isJava) {
 } else {
     apply plugin: 'com.github.dcendents.android-maven'
 }
-install {
-    repositories.mavenInstaller {
-        pom {
-            project {
-                packaging 'aar'
-
-                name project.name
-                url config.versions.siteUrl
-
-                licenses {
-                    license {
-                        name config.license.name
-                        url config.license.url
-                    }
-                }
-
-                developers {
-                    developer {
-                        id config.developer.id
-                        name config.developer.name
-                        email config.developer.email
-                    }
-                }
-                scm {
-                    connection config.versions.gitUrl
-                    developerConnection config.versions.gitUrl
-                    url config.versions.siteUrl
-                }
-            }
-        }
-    }
-}
 uploadArchives {
     repositories {
         mavenDeployer {

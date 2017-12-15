@@ -12,7 +12,7 @@ versions.desc = desc
 versions.siteUrl = "${git}/Permissions"
 versions.gitUrl = "${versions.siteUrl}.git"
 versions.issueTrackerUrl = "${versions.siteUrl}/issues"
-versions.githubRepo = versions.siteUrl
+versions.githubRepo = 'bintray/gradle-bintray-plugin'
 config.versions = versions
 
 def license = [:]
