@@ -4,6 +4,7 @@ def isJava = project.plugins.hasPlugin(JavaPlugin)
 def artifactId = getArtifactId()
 
 task sourcesJar(type: Jar) {
+    archivesBaseName = artifactId
     if (isJava) {
         from sourceSets.main.java.srcDirs
     } else {
@@ -12,19 +13,36 @@ task sourcesJar(type: Jar) {
     classifier = 'sources'
 }
 if (!isJava) {
-    task javadoc(type: Javadoc) {
-        source = android.sourceSets.main.java.srcDirs
-        classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    android.libraryVariants.all { variant ->
+        if (variant.name == 'release') { //我们只需 release 的 javadoc
+            task("generate${variant.name.capitalize()}Javadoc", type: Javadoc) {
+                source = variant.javaCompile.source
+                if (!javadocSource().isEmpty())
+                    source javadocSource()
+                classpath = files(variant.javaCompile.classpath.files)
+                exclude '**/BuildConfig.java'
+                exclude '**/R.java'
+            }
+            task("javadoc${variant.name.capitalize()}Jar", type: Jar, dependsOn: "generate${variant.name.capitalize()}Javadoc") {
+                classifier = 'javadoc'
+                from tasks.getByName("generate${variant.name.capitalize()}Javadoc").destinationDir
+            }
+            artifacts {
+                archives tasks.getByName("javadoc${variant.name.capitalize()}Jar")
+                archives sourcesJar
+            }
+        }
     }
-}
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    from javadoc.destinationDir
-    classifier = 'javadoc'
-}
+} else {
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        from javadoc.destinationDir
+        classifier = 'javadoc'
+    }
 
-artifacts {
-    archives javadocJar
-    archives sourcesJar
+    artifacts {
+        archives javadocJar
+        archives sourcesJar
+    }
 }
 
 tasks.withType(Javadoc) {
@@ -34,8 +52,12 @@ tasks.withType(Javadoc) {
         links "http://docs.oracle.com/javase/7/docs/api"
         if (!isJava) {
             linksOffline "https://developer.android.com/reference", "${android.sdkDirectory}/docs/reference"
+            bootClasspath project.file(android.getBootClasspath().join(File.pathSeparator))
         }
     }
+    options.addStringOption('Xdoclint:none', '-quiet')
+    options.addStringOption('-protected')
+    options.addStringOption('-splitindex')
 }
 
 def getArtifactId() {
@@ -43,6 +65,14 @@ def getArtifactId() {
     def artifactId = selfConfig ? project.artifactId : project.name
     println "project artifactId now is ${artifactId}. Use ext {artifactId = xxx} to customizing."
     return artifactId
+}
+
+def javadocSource() {
+    if (project.hasProperty('javadocSource')) {
+        println "javadocSource=${project.javadocSource}"
+        return project.javadocSource
+    }
+    return Collections.emptyList()
 }
 
 install {
@@ -100,10 +130,10 @@ bintray {
         publish = true //[Default: false] Whether version should be auto published after an upload
 
         version {
-            name = config.versions.version
-            desc = "release ${this.version}"
+            name = project.version?:config.versions.version
+            desc = "release ${project.version?:config.versions.version}"
             released = new Date()
-            vcsTag = config.versions.version
+            vcsTag = project.version?:config.versions.version
         }
     }
 }

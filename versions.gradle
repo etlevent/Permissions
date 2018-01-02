@@ -29,7 +29,11 @@ config.developer = developer
 def bintray = [:]
 bintray.user = getLocalProperties().getProperty('bintray.user')
 bintray.apikey = getLocalProperties().getProperty('bintray.apikey')
+assert bintray.user != null
+assert bintray.apikey != null
 config.bintray = bintray
+
+config.localRepos = 'E:/liuhao/Android/repos'
 
 ext.config = config
 

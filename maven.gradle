@@ -1,4 +1,5 @@
 def isJava = project.plugins.hasPlugin(JavaPlugin)
+def artifactId = getArtifactId()
 if (isJava) {
     apply plugin: 'maven'
 } else {
@@ -7,7 +8,17 @@ if (isJava) {
 uploadArchives {
     repositories {
         mavenDeployer {
-            repository(url: uri(LOCAL_ANDROID_REPOS))
+            pom.version = project.version
+            pom.groupId = project.group
+            pom.artifactId = artifactId
+            repository(url: uri(config.localRepos))
         }
     }
+}
+
+def getArtifactId() {
+    def selfConfig = project.hasProperty('artifactId')
+    def artifactId = selfConfig ? project.artifactId : project.name
+    println "project artifactId now is ${artifactId}. Use ext {artifactId = xxx} to customizing."
+    return artifactId
 }
