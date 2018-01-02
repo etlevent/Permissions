@@ -44,8 +44,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'cherry.android:permissions-api:2.0.0'
-    annotationProcessor 'cherry.android:permissions-compiler:2.0.0'
+    implementation 'cherry.android.permissions:permissions-api:2.0.0'
+    annotationProcessor 'cherry.android.permissions:permissions-compiler:2.0.0'
     compile 'com.android.support:appcompat-v7:26+'
     compile 'com.android.support:support-v4:26+'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'

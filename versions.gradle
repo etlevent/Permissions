@@ -6,7 +6,7 @@ def git = 'https://github.com/LeonardoLaus'
 def desc = 'android M runtime permissions with aop and apt.'
 
 def versions = [:]
-versions.group = 'cherry.android'
+versions.group = 'cherry.android.permissions'
 versions.version = '2.0.0'
 versions.desc = desc
 versions.siteUrl = "${git}/Permissions"
